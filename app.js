@@ -21,7 +21,7 @@
     article.className = `slice-card${i === 0 ? ' is-active' : ''}`;
     article.tabIndex = 0;
     article.dataset.index = String(i);
-    article.innerHTML = `<img src="${p.src}" alt="${p.title}，${p.author} 摄" loading="lazy" decoding="async"><div class="slice-label"><small>${String(i + 1).padStart(2, '0')} · 毛茸茸出没</small><h3>${p.title}</h3><p>${p.author}${p.imageIndex > 1 ? ` · 组照 ${p.imageIndex}` : ''}</p></div>`;
+    article.innerHTML = `<img src="${p.src}" alt="${p.title}，${p.author} 摄" loading="lazy" decoding="async" fetchpriority="low"><div class="slice-label"><small>${String(i + 1).padStart(2, '0')} · 毛茸茸出没</small><h3>${p.title}</h3><p>${p.author}${p.imageIndex > 1 ? ` · 组照 ${p.imageIndex}` : ''}</p></div>`;
     furryGallery.append(article);
   });
   const setFurry = (index) => {
@@ -49,24 +49,24 @@
   life.forEach((p, i) => {
     const article = document.createElement('article');
     article.className = 'story-card'; article.dataset.index = String(i); article.tabIndex = 0;
-    article.innerHTML = `<img src="${p.src}" alt="${p.title}，${p.author} 摄" loading="lazy" decoding="async" draggable="false"><div class="story-caption"><small>${String(i + 1).padStart(2, '0')} / 生活缝隙</small><h3>${p.title}</h3><p>${p.author}${p.imageIndex > 1 ? ` · 组照 ${p.imageIndex}` : ''}</p></div>`;
+    article.innerHTML = `<img src="${p.src}" alt="${p.title}，${p.author} 摄" loading="lazy" decoding="async" fetchpriority="low" draggable="false"><div class="story-caption"><small>${String(i + 1).padStart(2, '0')} / 生活缝隙</small><h3>${p.title}</h3><p>${p.author}${p.imageIndex > 1 ? ` · 组照 ${p.imageIndex}` : ''}</p></div>`;
     lifeGallery.append(article);
   });
   $('#lifeTotal').textContent = String(life.length).padStart(2, '0');
-  let lifeTarget = 0, lifeRaf = 0;
+  let lifeTarget = 0, lifeRaf = 0, lifeIndexRaf = 0;
   const storyCards = () => $$('.story-card', lifeGallery);
   const currentStoryIndex = () => {
-    let nearest = 0, min = Infinity;
-    storyCards().forEach((card, i) => { const distance = Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - innerWidth / 2); if (distance < min) { min = distance; nearest = i; } });
-    return nearest;
+    const cards = storyCards();
+    if (cards.length < 2) return 0;
+    const step = cards[1].offsetLeft - cards[0].offsetLeft;
+    const centeredLeft = lifeGallery.scrollLeft + lifeGallery.clientWidth / 2 - cards[0].offsetWidth / 2;
+    return Math.max(0, Math.min(cards.length - 1, Math.round((centeredLeft - cards[0].offsetLeft) / step)));
   };
-  const glideLife = () => { const delta = lifeTarget - lifeGallery.scrollLeft; lifeGallery.scrollLeft += delta * .24; if (Math.abs(delta) > .5) lifeRaf = requestAnimationFrame(glideLife); else { lifeGallery.scrollLeft = lifeTarget; lifeRaf = 0; } };
   const storyStep = (dir) => {
     const cards = storyCards();
     const targetIndex = Math.max(0, Math.min(cards.length - 1, currentStoryIndex() + dir));
     lifeTarget = Math.max(0, Math.min(lifeGallery.scrollWidth - lifeGallery.clientWidth, cards[targetIndex].offsetLeft - (lifeGallery.clientWidth - cards[targetIndex].offsetWidth) / 2));
-    if (lifeRaf) { cancelAnimationFrame(lifeRaf); lifeRaf = 0; }
-    lifeGallery.scrollTo({ left: lifeTarget, behavior: 'auto' });
+    lifeGallery.scrollTo({ left: lifeTarget, behavior: 'smooth' });
     $('#lifeCurrent').textContent = String(targetIndex + 1).padStart(2, '0');
   };
   $$('[data-story]').forEach((b) => b.addEventListener('click', () => storyStep(b.dataset.story === 'next' ? 1 : -1)));
@@ -77,13 +77,16 @@
     if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
     const max = lifeGallery.scrollWidth - lifeGallery.clientWidth;
     const unit = e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? innerHeight : 1;
-    const base = lifeRaf ? lifeTarget : lifeGallery.scrollLeft;
-    const next = Math.max(0, Math.min(max, base + e.deltaY * unit * 2.2));
+    const base = lifeGallery.scrollLeft;
+    const next = Math.max(0, Math.min(max, base + e.deltaY * unit * 1.45));
     const canMove = e.deltaY > 0 ? base < max - 1 : base > 1;
     if (!canMove) return;
     e.preventDefault();
     lifeTarget = next;
-    if (!lifeRaf) lifeRaf = requestAnimationFrame(glideLife);
+    if (!lifeRaf) lifeRaf = requestAnimationFrame(() => {
+      lifeGallery.scrollLeft = lifeTarget;
+      lifeRaf = 0;
+    });
   }, { passive: false });
   let dragStartX = 0, dragStartScroll = 0, didDrag = false;
   lifeGallery.addEventListener('pointerdown', (e) => {
@@ -111,7 +114,11 @@
   lifeGallery.addEventListener('click', (e) => { if (didDrag) { e.preventDefault(); e.stopImmediatePropagation(); didDrag = false; } }, true);
   lifeGallery.addEventListener('scroll', () => {
     if (!lifeRaf) lifeTarget = lifeGallery.scrollLeft;
-    $('#lifeCurrent').textContent = String(currentStoryIndex() + 1).padStart(2, '0');
+    if (lifeIndexRaf) return;
+    lifeIndexRaf = requestAnimationFrame(() => {
+      $('#lifeCurrent').textContent = String(currentStoryIndex() + 1).padStart(2, '0');
+      lifeIndexRaf = 0;
+    });
   }, { passive: true });
 
   const dialog = $('#lightbox'); let lightItems = [], lightIndex = 0;
