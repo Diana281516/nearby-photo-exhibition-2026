@@ -4,14 +4,14 @@
 /* Cinematic motion pass: quieter contrast, slower optical movement, cheaper paint. */
 .furry-section{background:#080808;padding-top:12vw}
 .slice-gallery{height:min(72vh,800px);gap:5px;contain:layout paint}
-.slice-card{min-width:38px;transition:flex-grow 1.05s var(--ease),filter .7s ease;filter:grayscale(.92) brightness(.62);contain:paint}
-.slice-card.is-active{flex-grow:12;filter:grayscale(.08) brightness(1)}
+.slice-card{min-width:38px;transition:flex-grow .58s var(--ease),opacity .35s ease;opacity:.48;contain:strict}
+.slice-card.is-active{flex-grow:12;opacity:1}
 .slice-card img{transform:scale(1.045);transition:transform 7s cubic-bezier(.18,.7,.2,1)}
 .slice-card:hover img,.slice-card.is-active img{transform:scale(1)}
 .life-section{background:#d8d7d2}
-.story-card{flex-basis:min(72vw,1080px);height:min(72vh,810px);background:#222;contain:paint}
-.story-card img{transform:scale(1.035);filter:grayscale(.22) contrast(1.04);transition:transform 6s cubic-bezier(.18,.7,.2,1),filter 1.2s ease}
-.story-card:hover img{transform:scale(1);filter:grayscale(0) contrast(1)}
+.story-card{flex-basis:min(72vw,1080px);height:min(72vh,810px);background:#222;contain:strict;content-visibility:auto;contain-intrinsic-size:1080px 810px}
+.story-card img{transform:scale(1.025);transition:transform 2.4s cubic-bezier(.18,.7,.2,1)}
+.story-card:hover img{transform:scale(1)}
 .story-controls{position:relative;z-index:5;pointer-events:auto}
 .story-controls button{position:relative;z-index:6;pointer-events:auto;touch-action:manipulation;user-select:none}
 .hero h1{line-height:.96}
@@ -20,3 +20,4 @@
 .story-track img{-webkit-user-drag:none;user-select:none}
 .story-track.is-dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}
 .story-track.is-dragging img{pointer-events:none}
+@media(max-width:900px){.slice-card,.slice-card.is-active{opacity:1}.grain{display:none}}
