@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="从评论区出发的线上摄影展：毛茸茸出没、生活缝隙与全员荣誉墙。" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>附近，正在发生｜线上摄影展</title>
+  <link rel="stylesheet" href="styles.css?v=20260902-8" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="回到展览首页"><span>附近，正在发生</span><i></i></a>
+    <nav aria-label="展览分区">
+      <a href="#furry">毛茸茸出没</a><a href="#life">生活缝隙</a>
+    </nav>
+    <button class="sound-toggle" type="button" aria-label="切换环境音" aria-pressed="false"><span></span>静音展厅</button>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-media" id="heroMedia"></div>
+      <div class="hero-shade"></div>
+      <p class="eyebrow">ONLINE PHOTO EXHIBITION · 2026</p>
+      <h1 id="hero-title"><span>附近，</span><span>正在发生</span></h1>
+      <p class="hero-intro">我们走过相同的日常，<br />却在不同的瞬间按下快门。</p>
+      <div class="hero-footer">
+        <div class="scroll-hint"><span></span>向下进入展厅</div>
+        <div class="hero-stats"><strong id="workCount">00</strong><span>幅影像</span><strong id="authorCount">00</strong><span>位创作者</span></div>
+      </div>
+    </section>
+
+    <section class="gallery-section furry-section" id="furry">
+      <div class="section-head reveal">
+        <div><span class="section-no">01</span><p>THE SOFT ENCOUNTERS</p></div>
+        <h2>毛茸茸<br />出没</h2>
+        <p class="section-copy">它们闯入镜头，也闯进生活。<br />点击或滑动，让每一只小动物舒展开来。</p>
+      </div>
+      <div class="slice-gallery" id="furryGallery" aria-label="毛茸茸出没作品轮播"></div>
+      <div class="gallery-note"><span>CLICK / DRAG / SCROLL</span><span id="furryProgress">01 / 01</span></div>
+    </section>
+
+    <section class="gallery-section life-section" id="life">
+      <div class="section-head light reveal">
+        <div><span class="section-no">02</span><p>THE GAPS OF EVERYDAY</p></div>
+        <h2>生活<br />缝隙</h2>
+        <p class="section-copy">暮色、街角、一次野餐与回家的路。<br />垂直滚轮也可以推动这段横向叙事。</p>
+      </div>
+      <div class="story-shell">
+        <div class="story-track" id="lifeGallery" tabindex="0" aria-label="生活缝隙作品轮播"></div>
+      </div>
+      <div class="story-controls">
+        <button type="button" data-story="prev" aria-label="上一幅作品">←</button>
+        <span><i id="lifeCurrent">01</i> / <i id="lifeTotal">01</i></span>
+        <button type="button" data-story="next" aria-label="下一幅作品">→</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>附近，正在发生</p><p>ONLINE PHOTO EXHIBITION</p><a href="#top">回到顶部 ↑</a>
+  </footer>
+
+  <dialog class="lightbox" id="lightbox">
+    <button class="lightbox-close" type="button" aria-label="关闭大图">×</button>
+    <button class="lightbox-arrow prev" type="button" aria-label="上一张">←</button>
+    <figure><img alt="" /><figcaption><span></span><strong></strong><small></small></figcaption></figure>
+    <button class="lightbox-arrow next" type="button" aria-label="下一张">→</button>
+  </dialog>
+
+  <script src="data.js?v=20260902-6"></script>
+  <script src="app.js?v=20260902-8"></script>
+</body>
+</html>
