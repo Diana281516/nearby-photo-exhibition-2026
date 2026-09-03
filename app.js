@@ -79,14 +79,12 @@
     $('#lifeCurrent').textContent = String(targetIndex + 1).padStart(2, '0');
   };
   $$('[data-story]').forEach((b) => b.addEventListener('click', () => storyStep(b.dataset.story === 'next' ? 1 : -1)));
-  lifeGallery.addEventListener('click', (e) => { const card = e.target.closest('.story-card'); if (card) openLightbox(life, +card.dataset.index); });
   lifeGallery.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') storyStep(1); if (e.key === 'ArrowLeft') storyStep(-1); if (e.key === 'Enter' && e.target.closest('.story-card')) openLightbox(life, +e.target.closest('.story-card').dataset.index); });
   // Keep the vertical wheel native so the page never traps the visitor.
   // The horizontal story remains available through dragging and arrow buttons.
   let dragStartX = 0, dragStartScroll = 0, didDrag = false;
   lifeGallery.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'touch' || e.button !== 0) return;
-    e.preventDefault();
     dragStartX = e.clientX;
     dragStartScroll = lifeGallery.scrollLeft;
     didDrag = false;
@@ -96,7 +94,7 @@
   lifeGallery.addEventListener('pointermove', (e) => {
     if (!lifeGallery.hasPointerCapture(e.pointerId)) return;
     const distance = e.clientX - dragStartX;
-    if (Math.abs(distance) > 4) didDrag = true;
+    if (Math.abs(distance) > 10) didDrag = true;
     lifeGallery.scrollLeft = dragStartScroll - distance * 1.35;
     lifeTarget = lifeGallery.scrollLeft;
   });
@@ -106,7 +104,16 @@
   };
   lifeGallery.addEventListener('pointerup', finishDrag);
   lifeGallery.addEventListener('pointercancel', finishDrag);
-  lifeGallery.addEventListener('click', (e) => { if (didDrag) { e.preventDefault(); e.stopImmediatePropagation(); didDrag = false; } }, true);
+  lifeGallery.addEventListener('click', (e) => {
+    if (didDrag) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      didDrag = false;
+      return;
+    }
+    const card = e.target.closest('.story-card');
+    if (card) openLightbox(life, +card.dataset.index);
+  }, true);
   lifeGallery.addEventListener('scroll', () => {
     if (!lifeRaf) lifeTarget = lifeGallery.scrollLeft;
     if (lifeIndexRaf) return;
