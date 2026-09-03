@@ -29,6 +29,7 @@
 .slice-card{min-width:54px;filter:none;transition:flex-grow .4s var(--ease),opacity .2s ease;opacity:.5}
 .slice-card:not(.is-near){display:none}
 .slice-card.is-active{filter:none;opacity:1}
+.slice-card.is-active img{object-fit:contain;transform:none;background:#090909}
 .story-card img{filter:none;transform:scale(1.012);transition:transform 1s var(--ease)}
 .story-caption{backdrop-filter:none;background:rgba(8,8,8,.94)}
 .furry-scrubber-wrap{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:18px;margin-top:18px;color:#888;font-size:9px;letter-spacing:.16em}
