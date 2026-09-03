@@ -16,6 +16,8 @@
   $('#heroMedia').style.backgroundImage = `url("${(life[1] || life[0] || photos[0]).src}")`;
 
   const furryGallery = $('#furryGallery');
+  const furryScrubber = $('#furryScrubber');
+  furryScrubber.max = String(Math.max(0, furry.length - 1));
   furry.forEach((p, i) => {
     const article = document.createElement('article');
     article.className = `slice-card${i === 0 ? ' is-active' : ''}`;
@@ -27,21 +29,28 @@
   const setFurry = (index) => {
     const cards = $$('.slice-card', furryGallery);
     index = (index + cards.length) % cards.length;
-    cards.forEach((card, i) => card.classList.toggle('is-active', i === index));
+    cards.forEach((card, i) => {
+      const distance = Math.min(Math.abs(i - index), cards.length - Math.abs(i - index));
+      card.classList.toggle('is-active', i === index);
+      card.classList.toggle('is-near', distance <= 3);
+    });
     $('#furryProgress').textContent = `${String(index + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
-    cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    furryScrubber.value = String(index);
+    furryScrubber.style.setProperty('--progress', `${cards.length > 1 ? index / (cards.length - 1) * 100 : 0}%`);
+    if (innerWidth < 900) cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   };
+  furryScrubber.addEventListener('input', () => setFurry(+furryScrubber.value));
   furryGallery.addEventListener('click', (e) => { const card = e.target.closest('.slice-card'); if (card) card.classList.contains('is-active') ? openLightbox(furry, +card.dataset.index) : setFurry(+card.dataset.index); });
   furryGallery.addEventListener('keydown', (e) => { const card = e.target.closest('.slice-card'); if (!card) return; if (e.key === 'Enter') openLightbox(furry, +card.dataset.index); if (e.key === 'ArrowRight') setFurry(+card.dataset.index + 1); if (e.key === 'ArrowLeft') setFurry(+card.dataset.index - 1); });
   let furryWheelLocked = false;
   furryGallery.addEventListener('wheel', (e) => {
-    if (innerWidth < 900 || Math.abs(e.deltaX) <= Math.abs(e.deltaY) || Math.abs(e.deltaX) < 8) return;
+    if (innerWidth < 900 || Math.abs(e.deltaX) <= Math.abs(e.deltaY) * 1.25 || Math.abs(e.deltaX) < 8) return;
     e.preventDefault();
     if (furryWheelLocked) return;
     furryWheelLocked = true;
     const active = +$('.slice-card.is-active', furryGallery).dataset.index;
     setFurry(active + (e.deltaX > 0 ? 1 : -1));
-    setTimeout(() => furryWheelLocked = false, 520);
+    setTimeout(() => furryWheelLocked = false, 260);
   }, { passive: false });
   setFurry(0);
 
