@@ -81,22 +81,8 @@
   $$('[data-story]').forEach((b) => b.addEventListener('click', () => storyStep(b.dataset.story === 'next' ? 1 : -1)));
   lifeGallery.addEventListener('click', (e) => { const card = e.target.closest('.story-card'); if (card) openLightbox(life, +card.dataset.index); });
   lifeGallery.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') storyStep(1); if (e.key === 'ArrowLeft') storyStep(-1); if (e.key === 'Enter' && e.target.closest('.story-card')) openLightbox(life, +e.target.closest('.story-card').dataset.index); });
-  const lifeSection = $('#life');
-  lifeSection.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-    const max = lifeGallery.scrollWidth - lifeGallery.clientWidth;
-    const unit = e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? innerHeight : 1;
-    const base = lifeGallery.scrollLeft;
-    const next = Math.max(0, Math.min(max, base + e.deltaY * unit * 1.45));
-    const canMove = e.deltaY > 0 ? base < max - 1 : base > 1;
-    if (!canMove) return;
-    e.preventDefault();
-    lifeTarget = next;
-    if (!lifeRaf) lifeRaf = requestAnimationFrame(() => {
-      lifeGallery.scrollLeft = lifeTarget;
-      lifeRaf = 0;
-    });
-  }, { passive: false });
+  // Keep the vertical wheel native so the page never traps the visitor.
+  // The horizontal story remains available through dragging and arrow buttons.
   let dragStartX = 0, dragStartScroll = 0, didDrag = false;
   lifeGallery.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'touch' || e.button !== 0) return;
